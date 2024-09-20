@@ -77,10 +77,31 @@ int main () {
     cmd = checkInput(input);
 
     if (cmd == 4) {
+      cout << "Sorry to see you go." << endl;
       isRunning = false;
     }
 
     else if (cmd == 3) { // DELETE
+      cout << "ID number of student to be deleted?" << endl;
+      int num;
+      cin >> num;
+      cin.get();
+
+      int index = 0;
+      bool deleted = false;
+      for (vector<Student*>::iterator it = slist.begin(); it != slist.end(); it++) {
+	if ((*it)->id == num) {
+	  slist.erase(slist.begin() + index);
+	  deleted = true;
+	}
+	index++;
+      }
+      if (!deleted) {
+	cout << "We couldn't find that student." << endl;
+      }
+      else {
+	cout << "Poof! They're gone." << endl;
+      }
     }
 
     else if (cmd == 2) { // PRINT
@@ -119,8 +140,9 @@ int main () {
       s->id = id;
       s->gpa = gpa;
 
-      cout << slist.at(0)->fname << endl;
-      cout << slist.at(0)->gpa << endl;      
+      // for debugging:
+      // cout << slist.at(0)->fname << endl;
+      // cout << slist.at(0)->gpa << endl;      
     }
     
     else {

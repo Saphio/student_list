@@ -10,16 +10,6 @@ struct Student {
   char lname[80];
   int id;
   float gpa;
-
-  // constructors
-  Student () {}
-  
-  Student (char f[80], char l[80], int i, float g) {
-    strcpy(fname, f);
-    strcpy(lname, l);
-    id = i;
-    gpa = g;
-  }
 };
 
 // functions
@@ -34,16 +24,38 @@ int checkInput (char input[80]);
 
 void printCmds ();
 
+/*
+int main () {
+  vector<Student*> slist;
+
+  // works:
+  // slist.push_back( {"Sophia", "Wang", 461932, 4.0} );
+  //struct Student sophia = {"Sophia", "Wang", 461932, 4.095};
+
+  Student* sophia = new Student();
+  char first[80] = "Sophia";
+  
+  slist.push_back(sophia);
+
+  strcpy(sophia->fname, first);
+  sophia->gpa = 4.0;
+  
+  cout << slist.at(0)->fname << endl;
+  cout << slist.at(0)->gpa << endl;
+  //  cout << slist.at(1).gpa << endl;
+}
+*/
+
 // main function
 int main () {
   vector<Student*> slist;
 
   cout << "Beginning the Student List program." << endl;
-  printCmds();
 
   bool isRunning = true;
 
   while (isRunning) {
+    printCmds ();
 
     // input
     char input[80];
@@ -99,8 +111,16 @@ int main () {
       cin >> gpa;
       cin.get();
 
-      Student* s = & new Student(first, last, id, gpa);
+      Student* s = new Student();
       slist.push_back(s);
+
+      strcpy(s->fname, first);
+      strcpy(s->lname, last);
+      s->id = id;
+      s->gpa = gpa;
+
+      cout << slist.at(0)->fname << endl;
+      cout << slist.at(0)->gpa << endl;      
     }
     
     else {

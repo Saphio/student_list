@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cstring>
+#include <iomanip>
 
 using namespace std;
 
@@ -89,6 +90,23 @@ int main () {
 
       int index = 0;
       bool deleted = false;
+
+
+      vector<Student*>::iterator it = slist.begin();
+      
+      while ((!deleted) && (it != slist.end())) {
+	if ((*it)->id == num) {
+	  delete slist.at(index);
+	  cout << "Data deleted" << endl;
+	  slist.erase(slist.begin() + index);
+	  cout << "Removed from struct" << endl;
+	  deleted = true;
+	}
+	index++;
+	it++;
+      }
+      
+      /*
       for (vector<Student*>::iterator it = slist.begin(); it != slist.end(); it++) {
 	if ((*it)->id == num) {
 	  slist.erase(slist.begin() + index);
@@ -96,6 +114,8 @@ int main () {
 	}
 	index++;
       }
+      */
+      
       if (!deleted) {
 	cout << "We couldn't find that student." << endl;
       }
@@ -107,7 +127,8 @@ int main () {
     else if (cmd == 2) { // PRINT
       // referenced https://cplusplus.com/reference/vector/vector/begin/
       for (vector<Student*>::iterator it = slist.begin(); it != slist.end(); it++) {
-	cout << (*it)->fname << " " << (*it)->lname << " -- ID: " << (*it)->id << " -- GPA: " << (*it)->gpa << endl;
+	cout << (*it)->fname << " " << (*it)->lname << " -- ID: " << (*it)->id;
+	cout << " -- GPA: " << fixed << setprecision(2) << (*it)->gpa << endl;
       }
     }
 

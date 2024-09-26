@@ -13,7 +13,7 @@ struct Student {
   float gpa;
 };
 
-// functions
+// function prototypes
 int checkInput (char input[80]);
 /*
   0 = not a command

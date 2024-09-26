@@ -25,28 +25,6 @@ int checkInput (char input[80]);
 
 void printCmds ();
 
-/*
-int main () {
-  vector<Student*> slist;
-
-  // works:
-  // slist.push_back( {"Sophia", "Wang", 461932, 4.0} );
-  //struct Student sophia = {"Sophia", "Wang", 461932, 4.095};
-
-  Student* sophia = new Student();
-  char first[80] = "Sophia";
-  
-  slist.push_back(sophia);
-
-  strcpy(sophia->fname, first);
-  sophia->gpa = 4.0;
-  
-  cout << slist.at(0)->fname << endl;
-  cout << slist.at(0)->gpa << endl;
-  //  cout << slist.at(1).gpa << endl;
-}
-*/
-
 // main function
 int main () {
   vector<Student*> slist;
@@ -77,7 +55,7 @@ int main () {
     // commands
     cmd = checkInput(input);
 
-    if (cmd == 4) {
+    if (cmd == 4) { // QUIT
       cout << "Sorry to see you go." << endl;
       isRunning = false;
     }
@@ -91,11 +69,12 @@ int main () {
       int index = 0;
       bool deleted = false;
 
-
+      // iterate through vector to find the right student
       vector<Student*>::iterator it = slist.begin();
       
       while ((!deleted) && (it != slist.end())) {
 	if ((*it)->id == num) {
+	  // delete the data and erase from the vector
 	  delete slist.at(index);
 	  cout << "Data deleted" << endl;
 	  slist.erase(slist.begin() + index);
@@ -105,17 +84,8 @@ int main () {
 	index++;
 	it++;
       }
-      
-      /*
-      for (vector<Student*>::iterator it = slist.begin(); it != slist.end(); it++) {
-	if ((*it)->id == num) {
-	  slist.erase(slist.begin() + index);
-	  deleted = true;
-	}
-	index++;
-      }
-      */
-      
+
+      // for user purposes
       if (!deleted) {
 	cout << "We couldn't find that student." << endl;
       }
@@ -137,6 +107,7 @@ int main () {
       int id;
       float gpa;
 
+      // prompt for information
       cout << "Student's first name?" << endl;
       cin.get(first, 80);
       cin.get();
@@ -153,6 +124,7 @@ int main () {
       cin >> gpa;
       cin.get();
 
+      // add to vector
       Student* s = new Student();
       slist.push_back(s);
 
@@ -161,9 +133,6 @@ int main () {
       s->id = id;
       s->gpa = gpa;
 
-      // for debugging:
-      // cout << slist.at(0)->fname << endl;
-      // cout << slist.at(0)->gpa << endl;      
     }
     
     else {
@@ -178,6 +147,7 @@ int main () {
 }
 
 // functions
+// print commands
 void printCmds () {
   cout << "Commands:\nADD (add student)\nPRINT (print student list)\nDELETE (delete student)\nQUIT (quit program)" << endl;
 }

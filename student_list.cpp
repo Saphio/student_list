@@ -3,43 +3,30 @@
 #include <cstring>
 #include <iomanip>
 #include "Student.h"
+#include "Node.h"
 
 using namespace std;
-
-// OLD Student struct
-/*
-struct Student {
-  char fname[80];
-  char lname[80];
-  int id;
-  float gpa;
-};
-*/
 
 // function prototypes
 int checkInput (char input[80]);
 void printCmds ();
-// OLD Student methods
-// void add (vector<Student*> &slist); 
-// void remove (vector<Student*> &slist);
-// void display (vector<Student*> slist);
 void add (Node* &head);
+void recurse (int id, Node* &head, Node* previous, Node* current);
 void remove (Node* &head);
-void display (Node* cur, Node* head);
+void display (Node* n);
+void average (Node* s, int students, float runningTotal);
 void quit (bool &status);
 
 // main function
 int main () {
-  // OLD Student vector
-  //  vector<Student*> slist;
-
   cout << "Beginning the Student List program." << endl;
 
   bool isRunning = true;
+  // head node
+  Node* head = NULL;
 
   while (isRunning) {
     printCmds ();
-
     // input
     char input[80];
     cin.get(input, 80);
@@ -55,26 +42,23 @@ int main () {
       cin.get(input, 80);
       cin.get();
     }
-
     // commands
     cmd = checkInput(input);
-
-    if (cmd == 4) { // QUIT
+    if (cmd == 5) { // QUIT
       quit (isRunning);
     }
-
+    else if (cmd == 4) { // AVERAGE
+      average (head, 0, 0);
+    }
     else if (cmd == 3) { // DELETE
-      remove (slist);
+      remove (head);
     }
-
     else if (cmd == 2) { // PRINT
-      display (slist);
+      display (head);
     }
-
     else if (cmd == 1) { // ADD
-      add (slist);
+      add (head);
     }
-    
     else {
       cout << "Unknown error occurred." << endl;
       isRunning = false;
@@ -86,7 +70,12 @@ int main () {
 // functions
 // print commands
 void printCmds () {
-  cout << "Commands:\nADD (add student)\nPRINT (print student list)\nDELETE (delete student)\nQUIT (quit program)" << endl;
+  cout << endl << "Commands:" << endl;
+  cout << "ADD (add student)" << endl;
+  cout << "PRINT (print student list)" << endl;
+  cout << "DELETE (delete student)" << endl;
+  cout << "AVERAGE (print average GPA)" << endl;
+  cout << "QUIT (quit program)" << endl;
 }
 
 // parse move input
@@ -95,102 +84,165 @@ void printCmds () {
   1 = ADD
   2 = PRINT
   3 = DELETE
-  4 = QUIT
+  4 = AVERAGE
+  5 = QUIT
  */
 int checkInput (char input[80]) {
-
   if (strcmp(input, "ADD") == 0) { return 1; }
   else if (strcmp(input, "PRINT") == 0) { return 2; }
   else if (strcmp(input, "DELETE") == 0) { return 3; }
-  else if (strcmp(input, "QUIT") == 0) { return 4; }
-
+  else if (strcmp(input, "AVERAGE") == 0) { return 4; }
+  else if (strcmp(input, "QUIT") == 0) { return 5; }
   return 0;
 }
 
 // primary methods
+// 0: INSERT
+void insert (Student* &s, Node* &head, Node* previous, Node* current) {
+  // no students
+  if (head == NULL) {
+    head = new Node(s);
+    return;
+  }
+  // insert before head student
+  else if (s->getGPA() < head->getStudent()->getGPA()) {
+    Node* temp = head;
+    head = new Node(s);
+    head->setNext(temp);
+    return;
+  }
+  // last student
+  else if (current == NULL) {
+    Node* temp = new Node(s);
+    previous->setNext(temp);
+    previous->getNext()->setNext(NULL);
+    return;
+  }
+  // between students
+  else if (s->getGPA() < current->getStudent()->getGPA()) {
+    Node* temp = new Node(s);
+    previous->setNext(temp);
+    temp->setNext(current);
+    return;
+  }
+  // recurse
+  else {
+    insert(s, head, current, current->getNext());
+  }
+}
+
 // 1: ADD
-void add (vector<Student*> &slist) {
+void add (Node* &head) {
   char first[80], last[80];
   int id;
   float gpa;
-  
   // prompt for information
   cout << "Student's first name?" << endl;
   cin.get(first, 80);
   cin.get();
-  
   cout << "Student's last name?" << endl;
   cin.get(last, 80);
   cin.get();
-  
   cout << "Student's ID number?" << endl;
   cin >> id;
   cin.get();
-  
   cout << "Student's GPA?" << endl;
   cin >> gpa;
   cin.get();
-  
-  // add to vector
+  // create student
   Student* s = new Student();
-  slist.push_back(s);
-      
-  strcpy(s->fname, first);
-  strcpy(s->lname, last);
-  s->id = id;
-  s->gpa = gpa;
+  s->setFirst (first);
+  s->setLast (last);
+  s->setID (id);
+  s->setGPA (gpa);
+  // insert in linked list
+  insert(s, head, head, head);
   return;
 }
 
 // 2: PRINT
-void display (vector<Student*> slist) { 
-  // referenced https://cplusplus.com/reference/vector/vector/begin/
-  for (vector<Student*>::iterator it = slist.begin(); it != slist.end(); it++) {
-    cout << (*it)->fname << " " << (*it)->lname << " -- ID: " << (*it)->id;
-    cout << " -- GPA: " << fixed << setprecision(2) << (*it)->gpa << endl;
+void display (Node* n) {
+  if (n != NULL) {
+    // print
+    Student* s = n->getStudent();
+    cout << s->getFirst() << " " << s->getLast() << " -- ID: " << s->getID();
+    cout << " -- GPA: " << fixed << setprecision(2) << s->getGPA() << endl;
+    // recurse
+    if (n->getNext() != NULL) {
+      display(n->getNext());
+    }
   }
   return;
 }
 
 // 3: DELETE
-void remove (vector<Student*> &slist) {
+void recurse (int id, Node* &head, Node* previous, Node* current) {
+  // no students
+  if (head == NULL) {
+    cout << "You have no students!" << endl;
+    return;
+  }
+  // head is the student
+  else if (id == head->getStudent()->getID()) {
+    Student* s = head->getStudent();
+    Node* next = head->getNext();
+    head = next;
+    delete s;
+    cout << "Poof! They're gone." << endl;
+    return;
+  }
+  // student not found
+  else if (current == NULL) {
+    cout << "That student doesn't exist!" << endl;
+    return;
+  }
+  // student is the current node
+  else if (id == current->getStudent()->getID()) {
+    Student* s = current->getStudent();
+    Node* next = current->getNext();
+    previous->setNext(next);
+    delete s;
+    cout << "Poof! They're gone." << endl;
+    return;
+  }
+  // go to next student
+  else {
+    recurse (id, head, current, current->getNext());
+  }
+}
+  
+ 
+void remove (Node* &head) {
   cout << "ID number of student to be deleted?" << endl;
   int num;
   cin >> num;
   cin.get();
-
-  int index = 0;
-  bool deleted = false;
-
-  // iterate through vector to find the right student
-  vector<Student*>::iterator it = slist.begin();
-
-  // before I moved this to another method, this could have just been a for loop with a return statement
-  // sad. :(
-  while ((!deleted) && (it != slist.end())) {
-    if ((*it)->id == num) {
-      // delete the data and erase from the vector
-      delete slist.at(index);
-      cout << "Data deleted" << endl;
-      slist.erase(slist.begin() + index);
-      cout << "Removed from struct" << endl;
-      deleted = true;
-    }
-    index++;
-    it++;
-  }
-
-  // for user purposes
-  if (!deleted) {
-    cout << "We couldn't find that student." << endl;
-  }
-  else {
-    cout << "Poof! They're gone." << endl;
-  }
+  // call recursion function
+  recurse (num, head, head, head);
   return;
 }
 
-// 4: QUIT
+// 4: AVERAGE
+void average (Node* s, int students, float runningTotal) {
+  // no students (avoid divide-by-zero error)
+  if (s == NULL) {
+    cout << "Average GPA: 0.00" << endl;
+  }
+  // add to running total
+  else {
+    runningTotal += s->getStudent()->getGPA();
+    students ++;
+    // no students left
+    if (s->getNext() == NULL) {
+      cout << "Average GPA: " << fixed << setprecision(2) << (float)runningTotal/(float)students << endl;
+      return;
+    }
+    // recurse
+    average(s->getNext(), students, runningTotal);
+  }
+}
+
+// 5: QUIT
 void quit (bool &status) {
   cout << "Sorry to see you go." << endl;
   status = false;

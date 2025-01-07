@@ -7,16 +7,23 @@ using namespace std;
 
 class Student {
  public:
+  // constructors, destructors
   Student();
-  Student(char*, int, float);
   ~Student();
-  char* getName();
-  int getGrade();
+  // getters
+  char* getFirst();
+  char* getLast();
+  int getID();
   float getGPA();
-  void display();
+  // setters
+  void setFirst (char*);
+  void setLast (char*);
+  void setID(int);
+  void setGPA (float);
  private:
-  char* name;
-  int grade;
+  char* first;
+  char* last;
+  int id;
   float gpa;
 };
 

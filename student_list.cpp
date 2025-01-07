@@ -2,28 +2,36 @@
 #include <vector>
 #include <cstring>
 #include <iomanip>
+#include "Student.h"
 
 using namespace std;
 
-// Student struct
+// OLD Student struct
+/*
 struct Student {
   char fname[80];
   char lname[80];
   int id;
   float gpa;
 };
+*/
 
 // function prototypes
 int checkInput (char input[80]);
 void printCmds ();
-void add (vector<Student*> &slist); 
-void remove (vector<Student*> &slist);
-void display (vector<Student*> slist); 
+// OLD Student methods
+// void add (vector<Student*> &slist); 
+// void remove (vector<Student*> &slist);
+// void display (vector<Student*> slist);
+void add (Node* &head);
+void remove (Node* &head);
+void display (Node* cur, Node* head);
 void quit (bool &status);
 
 // main function
 int main () {
-  vector<Student*> slist;
+  // OLD Student vector
+  //  vector<Student*> slist;
 
   cout << "Beginning the Student List program." << endl;
 
